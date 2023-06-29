@@ -69,17 +69,51 @@ public:
         : player(playerName, 100, 10, 5), currentRoomIndex(0) {}
 
     void createRooms() {
-        Enemy enemy1("Goblin", 20, 8, 2);
-        Enemy enemy2("Skeleton", 30, 10, 5);
-        Enemy enemy3("Orc", 40, 12, 8);
+        //Enemy enemy1("Goblin", 20, 8, 2);
+        //Enemy enemy2("Skeleton", 30, 10, 5);
+        //Enemy enemy3("Orc", 40, 12, 8);
 
-        Room room1("Dungeon Entrance", { enemy1 });
-        Room room2("Dark Corridor", { enemy1, enemy2 });
-        Room room3("Treasure Room", { enemy1, enemy2, enemy3 });
+        //Room room1("Dungeon Entrance", { enemy1 });
+        //Room room2("Dark Corridor", { enemy1, enemy2 });
+        //Room room3("Treasure Room", { enemy1, enemy2, enemy3 });
 
-        rooms.push_back(room1);
-        rooms.push_back(room2);
-        rooms.push_back(room3);
+        //rooms.push_back(room1);
+        //rooms.push_back(room2);
+        //rooms.push_back(room3);
+
+        srand(time(nullptr));
+
+        int Num_Rooms = 3;
+        int Max_Enemies = 4;
+
+        for (int i = 0; i < Num_Rooms; i++) {//number rooms
+            //room name
+            string roomName = "Room " + to_string(i + 1);
+            // random number of enemies
+            int randAmtEnemies = rand() % Max_Enemies + 1;
+            //vector of enemy objects
+            vector<Enemy> enemies;
+
+            for (int j = 0; j < randAmtEnemies; j++) { // ememies generate randome stats
+
+                string enemyName = "Enemy " + to_string(j + 1);
+
+                int enemyHealth = rand() % 20 + 10;
+                int enemyAttack = rand() % 5 + 5;
+                int enemyDefense = rand() % 3 + 2;
+
+                //create enemy objects from class
+                Enemy enemy(enemyName, enemyHealth, enemyAttack, enemyDefense);
+                //push enemies to the vector
+                enemies.push_back(enemy);
+                        
+            }
+            //create rooms from the class
+            Room room(roomName, enemies);
+            
+            //push rooms to the vector
+            rooms.push_back(room);
+        }
     }
 
     void play() {

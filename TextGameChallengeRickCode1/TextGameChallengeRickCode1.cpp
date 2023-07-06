@@ -255,7 +255,7 @@ public:
 
             if (currentRoomIndex >= rooms.size())
             {
-                cout << "weldone you won" << endl;
+                cout << "Well done, you won!" << endl;
                 return;
             }
         }

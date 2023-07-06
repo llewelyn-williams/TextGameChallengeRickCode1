@@ -42,7 +42,14 @@ public:
 
     void Use_Potion() {
         if (!inventory.empty()) {
-            health += inventory.back();
+            if (health + inventory.back() > 100) {
+                health = 100;
+                cout << "Maximum Health! \n";
+            }
+            else {
+                health += inventory.back();
+            }
+
             cout << "You used a potion and restored " << to_string(inventory.back()) << " health.\n";
             inventory.pop_back();
         }

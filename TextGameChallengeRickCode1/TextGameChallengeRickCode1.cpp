@@ -148,6 +148,18 @@ public:
 
     }
 
+    string Create_Health_Bar(int Current_Health, int Max_Health, int Bar_Width) {
+        int Filled_Width = static_cast<int>(1.0 * Current_Health / Max_Health * Bar_Width);
+        int Empty_Width = Bar_Width - Filled_Width;
+
+        string Health_Bar = "[";
+        Health_Bar += string(Filled_Width, '#');
+        Health_Bar += string(Empty_Width, ' ');
+        Health_Bar += "]";
+
+        return Health_Bar;
+    }
+
     void play() {
         cout << "Welcome to the Text RPG!" << endl;
 
@@ -156,6 +168,7 @@ public:
         while (true) {
             Room currentRoom = rooms[currentRoomIndex];
             cout << "You are in the " << currentRoom.name << "." << endl;
+            cout << "Player Health: " << Create_Health_Bar(player.health, 100, 20) << endl;
 
             if (currentRoom.enemies.size() > 0) {
                 cout << "Enemies encountered: " << endl;

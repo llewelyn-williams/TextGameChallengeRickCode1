@@ -169,6 +169,7 @@ public:
             Room currentRoom = rooms[currentRoomIndex];
             cout << "You are in the " << currentRoom.name << "." << endl;
             cout << "Player Health: " << Create_Health_Bar(player.health, 100, 20) << endl;
+            cout << "You have " << to_string(player.inventory.size()) << " potions left. \n";
 
             if (currentRoom.enemies.size() > 0) {
                 cout << "Enemies encountered: " << endl;

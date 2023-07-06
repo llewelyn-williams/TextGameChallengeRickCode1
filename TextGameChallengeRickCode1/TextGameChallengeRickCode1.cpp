@@ -35,15 +35,38 @@ public:
 class Player : public Character {
 public:
     int experience;
+    vector<string> inventory;
 
     Player(const string& name, int health, int attack, int defense)
         : Character(name, health, attack, defense), experience(0) {}
+
+    void Use_Potion() {
+        if (!inventory.empty()) {
+            inventory.pop_back();
+            health += 20;
+            cout << "You used a potion";
+        }
+        else {
+            cout << "You have no potions";
+        }
+    }
+};
+
+
+
+class Potion {
+public:
+    string Name;
+    int Health_Restore;
+
+    Potion(const string& name, int health_restore) : Name(name), Health_Restore(health_restore) {}
 };
 
 class Room {
 public:
     string name;
     vector<Enemy> enemies;
+    vector<Potion> potions;
 
     //Passing an object by reference into a constructor is useful when you want 
     //to avoid copying the object.This can be especially important when the 
@@ -56,7 +79,7 @@ public:
 
 
     Room(const string& name, const vector<Enemy>& enemies)
-        : name(name), enemies(enemies) {}
+        : name(name), enemies(enemies), potions(potions) {}
 };
 
 class Game {
@@ -114,6 +137,15 @@ public:
             //push rooms to the vector
             rooms.push_back(room);
         }
+
+        Potion potion1("Health Potion", 20);
+        Potion potion2("Medium Potion", 50);
+        Potion potion3("Large Potion", 100);
+
+        rooms[0].potions.push_back(potion1);
+        rooms[1].potions.push_back(potion2);
+        rooms[2].potions.push_back(potion3);
+
     }
 
     void play() {
@@ -160,9 +192,43 @@ public:
                         return;
                     }
                 }
+                if (currentRoom.potions.size() > 0) {
+                    cout << "You found some potions in the room!" << endl;
+                    cout << "Potions available: " << endl;
+
+                    for (const Potion& potion : currentRoom.potions) {
+                        cout << "- " << potion.Name << endl;
+                    }
+                    cout << "Do you want to collect the potion? (y / n): ";
+                    char choice;
+                    cin >> choice;
+
+                    if (choice == 'y') {
+                        Potion potion = currentRoom.potions.back();
+                        currentRoom.potions.pop_back();
+                        player.inventory.push_back(potion.Name);
+                        cout << "You took the " << potion.Name << " and added it to your inventory." << endl;
+                    }
+
+                }
+
+                if (player.inventory.size() > 0) {
+                    cout << "Would you like to use a a potion? (y / n)" << endl;
+                    char choice;
+                    cin >> choice;
+                    if (choice == 'y') {
+                        // Use Potion
+                        player.Use_Potion();
+
+                        cout << "You have " << to_string(player.inventory.size()) << " potions left. \n";
+                    }
+                    else {
+                        // Don't use Potion
+                    }
+                }
             }
 
-            cout << " Room is clear progress or quit = q ";
+            cout << " Room is clear progress or quit = q \n";
             char choice;
             cin >> choice;
 

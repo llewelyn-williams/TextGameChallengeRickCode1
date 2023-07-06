@@ -35,16 +35,16 @@ public:
 class Player : public Character {
 public:
     int experience;
-    vector<string> inventory;
+    vector<int> inventory;
 
     Player(const string& name, int health, int attack, int defense)
         : Character(name, health, attack, defense), experience(0) {}
 
     void Use_Potion() {
         if (!inventory.empty()) {
+            health += inventory.back();
+            cout << "You used a potion and restored " << to_string(inventory.back()) << " health.\n";
             inventory.pop_back();
-            health += 20;
-            cout << "You used a potion";
         }
         else {
             cout << "You have no potions";
@@ -139,8 +139,8 @@ public:
         }
 
         Potion potion1("Health Potion", 20);
-        Potion potion2("Medium Potion", 50);
-        Potion potion3("Large Potion", 100);
+        Potion potion2("Medium Potion", 40);
+        Potion potion3("Large Potion", 60);
 
         rooms[0].potions.push_back(potion1);
         rooms[1].potions.push_back(potion2);
@@ -220,7 +220,7 @@ public:
                     if (choice == 'y') {
                         Potion potion = currentRoom.potions.back();
                         currentRoom.potions.pop_back();
-                        player.inventory.push_back(potion.Name);
+                        player.inventory.push_back(potion.Health_Restore);
                         cout << "You took the " << potion.Name << " and added it to your inventory." << endl;
                     }
 

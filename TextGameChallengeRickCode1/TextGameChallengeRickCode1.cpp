@@ -1,56 +1,108 @@
-#include <iostream>
+/* Includes are libraries of pre - built classes that we
+can make use of in our C++ code.*/
+
+// Input output. Does lots of stuff. We need it for cinand cout at least, maybe more things.
+#include <iostream> 
+// String does string stuff, we include this becuase we work with strings in our code.
 #include <string>
+// We want to use vectors so we include vector. Vectors are similar to arrays
+// in that they store sets of data, but way fancier and do more that arrays can't.
 #include <vector>
+// Standard C Library? I don't know why we needed this, but we did.
 #include <cstdlib>
+// C Time, we used this to help us create some randomness.
 #include <ctime>
 
+// The lazy man thing we always do so that we don't have to write what
+// name space we're using in out code all the time. Standard Namespace.
 using namespace std;
 
+//Our first class, defines a chacter. This is our base class for both player and enemy.
 class Character {
+// The following will be public...
 public:
-    string name;
-    int health;
-    int attack;
-    int defense;
+    string name; // A string to store a character name.
+    int health; // The player health, it can go up and down and charcter dies if it reaches zero.
+    int attack; // How much base damage a character delivers when attaking.
+    int defense; // How much a character can negate received damage value.
 
+    // Constructor function for Character class 
+    // Takes a pointer to a string for the name and integers for the rest.
     Character(const string& name, int health, int attack, int defense)
         : name(name), health(health), attack(attack), defense(defense) {}
 
+    // Function to calulate and apply received damage.
+    // It takes an integer that is the amount of incoming damage attempting to be applied.
     void takeDamage(int damage) {
-        int actualDamage = max(0, damage - defense);
+        // The actual damage received is caculated by subtracting the defense value from the damage value.
+        // We don't want to accidently apply negative damage, so we only set the actual damage to the larger
+        // of either that calulated result OR zero.
+        int actualDamage = max(0, damage - defense); // max(this, that) - return larger of this or that.
+        // The character health is reduced by the amount of "actual damage".
         health -= actualDamage;
     }
 
+    //Function that will return either true or false
+    // Trus if the player IS dea, false if not.
     bool isDead() {
-        return health <= 0;
+        // The comparison (health <= 0) equates to a boolean value, either true or false.
+        // So if it's true the statement becomes "return true" and the obviouse opposite.
+        // If we could be certain that health is ALWAYS either 0 or a positive int, I belive we could
+        // have written this as "return !health" and it would still work, because this function
+        // returns a bool, it'll take any int that isn't zero and treat is a true.
+        return health <= 0; 
     }
 };
 
+
+// Here  is our Enemy class, it's a decendent of the Character class
 class Enemy : public Character {
 public:
+    // It's contructor takes the same stuff as the Character class, then
+    // it puts them into those pars of itself that it get from the Character class.
     Enemy(const string& name, int health, int attack, int defense)
         : Character(name, health, attack, defense) {}
 };
 
+// Here  is our Player class, it's a decendent of the Character class as well
 class Player : public Character {
 public:
-    int experience;
-    vector<int> inventory;
+    // UNlike our enemy, the player ALSO has experience and an inventory.
+    int experience; // An int, that I'm not sure we actually use afterwards.
 
+    //This is a vector of ints, it stores potion values not potion objects in their entirety.
+    vector<int> inventory; // To store potion health restoration values as int, we only got as far as potions.
+
+    // The player constructor takes all the things that character class part neds and
+    // passes them to it and the additoinaly sets the experience to an inital value of zero.
+    // This is some quick contructor way of writing "experience = 0;"
     Player(const string& name, int health, int attack, int defense)
         : Character(name, health, attack, defense), experience(0) {}
 
+    // Function to use a collected potion.
     void Use_Potion() {
+
+        // Check to see if we actually have any in the inventory.
         if (!inventory.empty()) {
+
+            // If we added the potion restoration value to the current health, would it EXCEED 100?
             if (health + inventory.back() > 100) {
+                // Wew don't want it to exceed 100 because some othe code will break because it's
+                // using 100 as an assumed maximum health. So, we simply set the health to 100.
                 health = 100;
                 cout << "Maximum Health! \n";
             }
             else {
+                // Otherwise go ahead and just increase the health by the amount of the last picked up potion.
                 health += inventory.back();
             }
 
+            // Tell the player how much health they restored. to_string is used because << is trying
+            // to slpa different strings togeether and I think it'd get confused if we changed type 
+            // in the middle of doing that.
             cout << "You used a potion and restored " << to_string(inventory.back()) << " health.\n";
+            
+            // We just "used" a potion so we remove it from the inventory. The one from the end or "back".
             inventory.pop_back();
         }
         else {

@@ -112,20 +112,22 @@ public:
 };
 
 
-
+// The potion class
 class Potion {
 public:
-    string Name;
-    int Health_Restore;
+    string Name; // Such as "Medium Potion", "Large Potion" etc.
+    int Health_Restore; // How much it can heal you.
 
+    // We use a string pointer here but I can't remeber if this is because we HAVE TO or because it's preferable. 
     Potion(const string& name, int health_restore) : Name(name), Health_Restore(health_restore) {}
 };
 
 class Room {
 public:
+    // So the reeom will have a name and a collection of potions and enemies in it.
     string name;
-    vector<Enemy> enemies;
-    vector<Potion> potions;
+    vector<Enemy> enemies; // A container that contains objects of the class type Enemy, the container is called enemies.
+    vector<Potion> potions; // A container that contains objects of the class type Potion, the container is called potions.
 
     //Passing an object by reference into a constructor is useful when you want 
     //to avoid copying the object.This can be especially important when the 
@@ -143,10 +145,13 @@ public:
 
 class Game {
 public:
-    Player player;
-    vector<Room> rooms;
-    int currentRoomIndex;
+    Player player; // An onject of class Player called "player"
+    vector<Room> rooms; // A container that contains objects of the class type Room, the container is called rooms.
+    int currentRoomIndex; // An integer that we will increment as we move through the rooms.
 
+    // When using this contructor all you need supply is the name for the player as a string.
+    // The player is instatiated with default vaues for health, attack and defence.
+    // The room index is set to zero.
     Game(const string& playerName)
         : player(playerName, 100, 10, 5), currentRoomIndex(0) {}
 
@@ -163,26 +168,49 @@ public:
         //rooms.push_back(room2);
         //rooms.push_back(room3);
 
+        /* So, random doesn't exist within the computer. The numbers have to come some SOMEWHERE.
+        srand() I belive is being used to take something as random as you can manage to use to create
+        a "seed" for random numbers.
+
+        calling time() with nullptr gives the current epch time (which changes every second? - so it's an easy source of 
+        something "very varied" if not truly random.
+
+        With this set we can  then make use of rand()
+        */
+
         srand(time(nullptr));
 
-        int Num_Rooms = 3;
-        int Max_Enemies = 4;
+        int Num_Rooms = 3; // Set how many rooms we want.
+        int Max_Enemies = 4; // Set the maximum number of enemies that we're going to have populate a room.
 
+        //Loop to create rooms
         for (int i = 0; i < Num_Rooms; i++) {//number rooms
             //room name
-            string roomName = "Room " + to_string(i + 1);
+            string roomName = "Room " + to_string(i + 1); // Our room names will not be exciting, they'll be Room1, Room2 etc.
             // random number of enemies
+            
+            /* rand() returns a psudo - random number between 0 and something quite large.
+             So, by using the modulo operator with it, we can get ourselves a number between
+             zero and the one supplied.
+             This is because the remainder when you divide a number by another number is either going to be 
+             zero or at most one less than the number you're dividing by.. 
+             .. which is why we +1 to it. So that it's shifted up.
+             So we'll actually get between 1 and the maximum number of enemies we specified.
+            */
             int randAmtEnemies = rand() % Max_Enemies + 1;
+
             //vector of enemy objects
+            // Ready to be filled with the enemies that we'll create.
             vector<Enemy> enemies;
 
-            for (int j = 0; j < randAmtEnemies; j++) { // ememies generate randome stats
+            // So we loop for the amount of times as random enemies we determined
+            for (int j = 0; j < randAmtEnemies; j++) { // ememies generate random stats
 
-                string enemyName = "Enemy " + to_string(j + 1);
+                string enemyName = "Enemy " + to_string(j + 1); // Boring enemy names. Enemy1, Enemy2 etc.
 
-                int enemyHealth = rand() % 20 + 10;
-                int enemyAttack = rand() % 5 + 5;
-                int enemyDefense = rand() % 3 + 2;
+                int enemyHealth = rand() % 20 + 10; // Health between 10 and 29
+                int enemyAttack = rand() % 5 + 5; // Attack power between 5 and 9
+                int enemyDefense = rand() % 3 + 2; // Defence between 2 and 4
 
                 //create enemy objects from class
                 Enemy enemy(enemyName, enemyHealth, enemyAttack, enemyDefense);
@@ -191,19 +219,29 @@ public:
                         
             }
             //create rooms from the class
-            Room room(roomName, enemies);
+            /* If you were to look back at the room constructor you;d see it takes two things.
+            a string for a name and a vector that contains objects of type Enemy.
+            And that's what we give it. The roomName is the boring name we generated above
+            within this loop. 
+            enemies was also created at this level of the loop, but we used the nested loop
+            immediately above here to create the individual Enemy objects and push them to the
+            vector enemies. */
+            Room room(roomName, enemies); 
             
             //push rooms to the vector
             rooms.push_back(room);
         }
 
+        // Here were create some potions.
         Potion potion1("Health Potion", 20);
         Potion potion2("Medium Potion", 40);
         Potion potion3("Large Potion", 60);
 
-        rooms[0].potions.push_back(potion1);
-        rooms[1].potions.push_back(potion2);
-        rooms[2].potions.push_back(potion3);
+        // We know that we have 3 rooms, so we're just putting
+        // each potion into a room in turn.
+        rooms[0].potions.push_back(potion1); // Standard potion in the first room (20 hp).
+        rooms[1].potions.push_back(potion2); // Medium potion in the first room (40 hp).
+        rooms[2].potions.push_back(potion3); // Large potion in the first room (60 hp).
 
     }
 

@@ -256,11 +256,14 @@ public:
         /* First we divide the Current Health by the Max health to know what proportion of the bar needs to be filled
          In this case thetotal bar width will represent the max health.
          We thhen mutiply that nuber by the bar with value, so that it becomes a proportion OF THAT.
-         I don't know what we need to multiply it by 1.0, but there's probably a reason.
          That value is then cast as an int because as we're using division there's the potential
          for it to be a float or double as a result and we only want to use ints.*/
 
-        // I don't know what we specifically use static_cast over any of the other casting methods.
+         /* Multiplying by 1.0 is coing to cause a conversion from int to double.
+         One reason I think ew might do that is because the result of the division migght be a decimal number.
+         So perhaps is's necessary in case that is the case.
+         static_cast can cast down from double to int like we're doing here
+         but I don't know why you wouldn't use the simpler : int (expression) */
         int Filled_Width = static_cast<int>(1.0 * Current_Health / Max_Health * Bar_Width);
 
         // The empty width is the reaminder fo the bar width once you subtract the recently calulated filled width.

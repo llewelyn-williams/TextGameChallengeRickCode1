@@ -245,18 +245,43 @@ public:
 
     }
 
+    // This console based visual health bar made out of charactres was one of the last tings added to the game.
+    // This is a fcuntion that returns a string.
+    // The function takes three ints to work out how to diplay the health.
     string Create_Health_Bar(int Current_Health, int Max_Health, int Bar_Width) {
+
+        // Filled width is how much of the health bar will be filled.
+        // For this health bar that means how many '#' will be displaye din a row.
+        
+        /* First we divide the Current Health by the Max health to know what proportion of the bar needs to be filled
+         In this case thetotal bar width will represent the max health.
+         We thhen mutiply that nuber by the bar with value, so that it becomes a proportion OF THAT.
+         I don't know what we need to multiply it by 1.0, but there's probably a reason.
+         That value is then cast as an int because as we're using division there's the potential
+         for it to be a float or double as a result and we only want to use ints.*/
+
+        // I don't know what we specifically use static_cast over any of the other casting methods.
         int Filled_Width = static_cast<int>(1.0 * Current_Health / Max_Health * Bar_Width);
+
+        // The empty width is the reaminder fo the bar width once you subtract the recently calulated filled width.
         int Empty_Width = Bar_Width - Filled_Width;
 
-        string Health_Bar = "[";
-        Health_Bar += string(Filled_Width, '#');
-        Health_Bar += string(Empty_Width, ' ');
-        Health_Bar += "]";
+        // Here a string called Health_Bar is constructed.
+        string Health_Bar = "["; // The string starts with the '[' to show it's the start of the bar.
 
-        return Health_Bar;
+        // Then we += the string(so effectively add on to the existing) as many # symbols as worked out.
+        // Here we use the 2 arguemtn contructor of the form: string(size_type count, CharT ch)
+        // This takes a number and character and reurns a string of that character repeated as many tie as the number.
+        // Obviously ideal for this situation where that's exactly what we want to d with our filled and then empty widths
+        // with '#' for the filled followed by ' ' for the empty. 
+        Health_Bar += string(Filled_Width, '#'); 
+        Health_Bar += string(Empty_Width, ' ');
+        Health_Bar += "]"; // Finally we add a ']' on the end to show it's the end of the bar.
+
+        return Health_Bar; // Return the string created above.
     }
 
+    // The play function. Here we do a lot of cout to the console that is the game that the user sees / plays.
     void play() {
         cout << "Welcome to the Text RPG!" << endl;
 

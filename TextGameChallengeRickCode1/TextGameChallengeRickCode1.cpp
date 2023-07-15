@@ -352,7 +352,7 @@ public:
                 }
 
                 if (player.inventory.size() > 0) {
-                    cout << "Would you like to use a a potion? (y / n)" << endl;
+                    cout << "Would you like to use a potion? (y / n)" << endl;
                     char choice;
                     cin >> choice;
                     if (choice == 'y') {

@@ -288,49 +288,113 @@ public:
     void play() {
         cout << "Welcome to the Text RPG!" << endl;
 
-        createRooms();
+        // We call the function defined earlier.
+        // This meaks the room and puts the enemies and potions in them as well.
+        createRooms(); 
         
+        // An infite loop, the game is "running".
         while (true) {
-            Room currentRoom = rooms[currentRoomIndex];
-            cout << "You are in the " << currentRoom.name << "." << endl;
-            cout << "Player Health: " << Create_Health_Bar(player.health, 100, 20) << endl;
+            // We create a room (currentRoom), it is a copy of one of the rooms from the vector rooms at the current index.
+            Room currentRoom = rooms[currentRoomIndex]; 
+            // We tell the player what room they're in.
+            cout << "You are in the " << currentRoom.name << "." << endl; 
+            // We display the healthbar using the player heath, max 100 and 20 bar sections.
+            cout << "Player Health: " << Create_Health_Bar(player.health, 100, 20) << endl; 
+            // Using dot notation we access the inventory vector on the player object.
+            // The vector has a method size() that tells us how many items are in the vector.
+            // We take that number and use to_string() to convert it to a string because
+            // we're chaiing together << to the cout, so we need each part chained to be
+            // a string.
             cout << "You have " << to_string(player.inventory.size()) << " potions left. \n";
 
+
+            // Aother loop. While the current room has more than zero enemies
+            // (i.e. you haven't killed them all yet.)
             if (currentRoom.enemies.size() > 0) {
+                // Say what enemies there are in the room.
                 cout << "Enemies encountered: " << endl;
+                /* Because there can be more than one enemy, we use a 'Ranged for Loop'
+                So for each item within the collection on the right of the colon 
+                a varable is created with the name on the left.
+                In this case a contant pointer to an object of class type Enemy, called ebemy*/
                 for (const Enemy& enemy : currentRoom.enemies) {
-                    cout << enemy.name << endl;
+                    cout << enemy.name << endl; // Within the loop for each enemy we cout its name.
                 }
 
                 // Battle loop
+                /* So, two negative conditions here.Both need to be met for the loop to run.
+                The first is the opposite of currentRoom.enemies.empty(), so if the enemies
+                vector in the current room IS NOT empty..
+                The second is the of player.isDead(), so if the sunction isDead() on the player
+                returns true, then !player.isDead() will return false. Therefore the player IS NOT
+                dead.
+                In summary, "Room is not empty and player is not dead."
+                It is in this instance we will engage in battle with the enemy in the room. 
+                If either are true then we shall not and we will skip this entire loop.*/
                 while (!currentRoom.enemies.empty() && !player.isDead()) {
+                    // We create a enemy (enemy), it is a copy of one of the enemies from the vector enemies at the first position in the vector.
+                    // We are not changing the index here '[0]', because as we kill the enemies we will be removing them from the vector and the "next"
+                    // ememy will take it's place at the front of the vector.
                     Enemy& enemy = currentRoom.enemies[0];
+                    // Let the player know what they're fighting.
                     cout << "You are battling " << enemy.name << "." << endl;
 
+                    // Another loop. This one if for fighting.
+                    // Player and enemy will take it in turn to attack each other until either is dead.
+                    // This look is esentially "while neither the player or enemy are dead..."
                     while (!enemy.isDead() && !player.isDead()) {
                         // Player's turn
-                        enemy.takeDamage(player.attack);
+                        // We use the player attack value with the takeDamage method of the enemy.
+                        // This is both the act of the player attacking and the enemy being attacked (receiving damage)
+                        enemy.takeDamage(player.attack); 
+                        // Provide a visual output of what's happenig above.
                         cout << "You attacked " << enemy.name << " for " << player.attack << " damage." << endl;
 
                         // Enemy's turn
+                        // As the player goes first at the enemy might be dead as a result, we check
+                        // to see if the enemy is dead before they have thier go, if they're dead, 
+                        // then they don't get a go and this section is skipped over.
                         if (!enemy.isDead()) {
+                            // Just like above but the other way around. 
+                            // We use the ememy attack value with the takeDamage method of the player.
+                            // This is both the act of the enemy attacking and the player being attacked (receiving damage)
                             player.takeDamage(enemy.attack);
+                            // Provide a visual output of what's happenig above.
                             cout << enemy.name << " attacked you for " << enemy.attack << " damage." << endl;
+
+                            // Note: Whie the readout is telling you now much you attack damage was delivered.
+                            // This will not be the amout of health reduced, becuase it hasn't taken into account
+                            // the defense value of either character that comes into play when they takeDamage()
                         }
                     }
 
+                    // Eventually after taking enough turns hitting each other either the player or the enmy will be dead.
+                    // We move out of the "fighting" loop and back to the level of the "battle" loop.
+
+                    // If it's the enmy that is dead.
                     if (enemy.isDead()) {
-                        cout << "You defeated " << enemy.name << "." << endl;
-                        player.experience += 10;
+                        cout << "You defeated " << enemy.name << "." << endl; // Let the player know they killed them.
+                        player.experience += 10; // Increase the player experience points (we don't actually use this for anything else anywhere)
+                        // Remove the enmy from the vector of enemies for this room.
+                        // So,  currentRoom.enemies.erase( 'position in the vector' ) - Will remove the item from the vector at the spefied position.
+                        //  currentRoom.enemies.begin() - this gives us the position where we want to remove the enemy.
+                        // as mentioned above this means that the "next" will now be at the front once this is removed
+                        // ready for the next iteration of the loop. Or if it was the only or last one, the vector will be empty.
+                        // it will have a size of zero (the condition we check for to see if the loop will continue or not)
                         currentRoom.enemies.erase(currentRoom.enemies.begin());
                     }
 
+                    // If it's the player that is dead.
                     if (player.isDead())
                     {
                         cout << "You are deaded " << endl;
-                        return;
+                        return; // We exit the battle loop 
                     }
                 }
+
+                // Once we exit the battle loop...
+
+
                 if (currentRoom.potions.size() > 0) {
                     cout << "You found some potions in the room!" << endl;
                     cout << "Potions available: " << endl;
